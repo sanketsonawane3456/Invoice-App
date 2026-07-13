@@ -1,0 +1,1235 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Invoice - SPECTRUM LIGHT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Invoice-specific High-Fidelity Styling */
+        .invoice-box {
+            border: 2px solid #000 !important;
+            background: #fff;
+            color: #000;
+            font-family: 'Verdana', sans-serif;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .invoice-border-bottom {
+            border-bottom: 2px solid #000;
+        }
+
+        .invoice-border-right {
+            border-right: 2px solid #000;
+        }
+
+        .invoice-border-top {
+            border-top: 2px solid #000;
+        }
+
+        /* Griq Logo Graphic styling */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .logo-bars-top {
+            display: flex;
+            gap: 2.5px;
+            align-items: flex-end;
+            height: 14px;
+            margin-bottom: 2px;
+        }
+
+        .logo-bars-bottom {
+            display: flex;
+            gap: 2.5px;
+            align-items: flex-start;
+            height: 14px;
+            margin-top: 2px;
+        }
+
+        .logo-bar {
+            width: 2.5px;
+            background-color: #000;
+        }
+
+        .logo-text {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            line-height: 1;
+            text-align: center;
+        }
+
+        /* Invoice Grid Cells styling */
+        .grid-header {
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            background-color: #fcfcfc;
+        }
+
+        .grid-cell {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+
+        .grid-label {
+            font-weight: 700;
+            min-width: 110px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .grid-label-sm {
+            font-weight: 700;
+            min-width: 50px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        /* Invoice Table Styling */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0 !important;
+        }
+
+        .invoice-table th,
+        .invoice-table td {
+            border: 1px solid #000 !important;
+            padding: 5px 8px !important;
+            font-size: 0.78rem;
+            vertical-align: middle;
+        }
+
+        .invoice-table th {
+            background-color: #f8f9fa;
+            font-weight: 700;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .invoice-table tbody tr {
+            min-height: 35px;
+        }
+
+        #invoiceProductsBody td {
+            border-top: none !important;
+            border-bottom: none !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        #invoiceProductsBody tr:first-child td {
+            border-top: 1px solid #000 !important;
+        }
+
+        #invoiceProductsBody tr:last-child td {
+            border-bottom: 1px solid #000 !important;
+        }
+        #invoiceProductsBody .invoice-input {
+            border-bottom: none !important;
+        }
+
+        /* Product Description Column - Fixed width with text wrapping */
+        .invoice-table td:nth-child(2),
+        .invoice-table th:nth-child(2) {
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            max-width: 350px;
+        }
+
+        /* HSN Code Column - Max 8 digits, centered */
+        .hsn-field {
+            max-width: 80px;
+            text-align: center;
+        }
+
+        /* Quantity Field - Whole numbers only, right aligned */
+        .qty-field {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Rate Field - 2 decimal places, right aligned */
+        .rate-field {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Clean Borderless Inputs in Form Table */
+        .invoice-input {
+            border: none;
+            border-bottom: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.8rem;
+            background: transparent;
+            padding: 1px 4px;
+        }
+
+        .invoice-input:focus {
+            border-bottom: none;
+            background: #f4f6fa;
+        }
+
+        .number-font {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+
+        /* Disable number input spinner controls to prevent text clipping */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Seamless Header Inputs */
+        .header-input {
+            border: none !important;
+            background: transparent !important;
+            text-align: center;
+            width: 100%;
+            outline: none;
+            color: #000;
+            transition: background 0.15s ease;
+        }
+
+        .header-input:hover {
+            background: #f4f6fa !important;
+            border-bottom: none !important;
+        }
+
+        .header-input:focus {
+            background: #eef1f6 !important;
+            border-bottom: none !important;
+        }
+
+        /* Stamp Styling - Fixed */
+        .stamp-box {
+            border: 2px double #000;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-size: 0.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 8px;
+            margin: 10px auto;
+            position: relative;
+            transform: rotate(-4deg);
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.1;
+            overflow: hidden;
+        }
+
+        .stamp-box::after {
+            content: "";
+            position: absolute;
+            border: 1px solid #000;
+            border-radius: 50%;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            pointer-events: none;
+        }
+
+        .stamp-inner {
+            font-size: 0.45rem;
+            font-weight: 800;
+            line-height: 1.05;
+            text-align: center;
+            word-wrap: break-word;
+            padding: 0 2px;
+        }
+
+        .stamp-center {
+            font-size: 0.4rem;
+            margin: 2px 0;
+            letter-spacing: 0.3px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 1px 4px;
+        }
+
+        .stamp-location {
+            font-size: 0.35rem;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .field-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .field-label {
+            font-weight: 700;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .field-label-colon {
+            font-weight: 700;
+            flex-shrink: 0;
+            white-space: nowrap;
+            margin-right: 4px;
+        }
+
+        /* Fix for UDYAM field - prevent wrapping */
+        .udyam-input {
+            width: 180px !important;
+            min-width: 180px !important;
+            flex-shrink: 0 !important;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+                padding: 0 !important;
+                color: #000 !important;
+            }
+
+            .form-container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .invoice-box {
+                border: 2px solid #000 !important;
+                box-shadow: none !important;
+            }
+
+            .invoice-input {
+                border: none !important;
+                border-bottom: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+            }
+
+            input.invoice-input,
+            textarea.invoice-input {
+                border: none !important;
+                border-bottom: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+            }
+
+            .stamp-box {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container" style="max-width: 1000px; margin: 20px auto;">
+
+        <!-- Action Bar with Native Print and PDF download buttons -->
+        <div class="action-bar no-print mb-3 d-flex gap-2 justify-content-end">
+            <button class="btn btn-primary btn-sm" onclick="window.print()">
+                <i class="fas fa-print"></i> Print
+            </button>
+            <button class="btn btn-success btn-sm" id="downloadPdfBtn">
+                <i class="fas fa-file-pdf"></i> Download PDF
+            </button>
+        </div>
+
+        <form id="taxInvoiceForm">
+            <!-- Main Content Grid styled precisely like the Tax Invoice page -->
+            <div class="card invoice-box">
+
+                <!-- Page Top Header with Spectrum Light Details -->
+                <div class="row g-0 align-items-center invoice-border-bottom">
+                    <div class="col-3 text-center d-flex flex-column align-items-center justify-content-center py-2"
+                        style="min-height: 110px;">
+                        <div class="logo-container" style="width: 110%;">
+                            <!-- Default Bars & Editable Logo Text (Hidden) -->
+                            <div id="defaultLogoGraphic" class="d-none d-flex flex-column align-items-center">
+                                <div class="logo-bars-top">
+                                    <div class="logo-bar" style="height: 6px;"></div>
+                                    <div class="logo-bar" style="height: 10px;"></div>
+                                    <div class="logo-bar" style="height: 14px;"></div>
+                                    <div class="logo-bar" style="height: 10px;"></div>
+                                    <div class="logo-bar" style="height: 6px;"></div>
+                                </div>
+                                <input type="text" id="logoTextVal"
+                                    class="header-input fw-extrabold text-uppercase text-center m-0 p-0"
+                                    style="font-size: 1.15rem; letter-spacing: 2px; font-weight: 800; width: 100%;"
+                                    value="GRIQ">
+                                <div class="logo-bars-bottom">
+                                    <div class="logo-bar" style="height: 6px;"></div>
+                                    <div class="logo-bar" style="height: 10px;"></div>
+                                    <div class="logo-bar" style="height: 14px;"></div>
+                                    <div class="logo-bar" style="height: 10px;"></div>
+                                    <div class="logo-bar" style="height: 6px;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Custom Logo Image -->
+                            <div id="customLogoWrapper" class="w-100"
+                                style="max-height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <img id="customLogoImage" src="logo.jpeg"
+                                    style="max-height: 170px; max-width: 100%; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-9 py-2 px-3 text-center d-flex flex-column justify-content-center">
+                        <textarea class="header-input fw-extrabold text-uppercase m-0 auto-resize" rows="1"
+                            style="font-family: 'Verdana', sans-serif; font-size: 1.7rem; letter-spacing: 2px; font-weight: 800; line-height: 1.4; padding: 6px 0; resize: none; overflow: hidden; height: auto;"
+                            required readonly
+                            placeholder="COMPANY NAME"> FUSION MASTER TECH INNOVATION AND DEVELOPMENT PVT. LTD.</textarea>
+                        <textarea class="header-input fw-semibold mt-1 auto-resize" rows="2"
+                            style="font-family: 'Verdana', sans-serif; font-size: 0.72rem; line-height: 1.5; padding: 4px 0; resize: none; overflow: hidden; height: auto;"
+                            placeholder="Ground Floor,Office No.06,No.23/2 Barne Estate,Shri Ram Sukh Hospital Marg,Shri Vishnu Bhavan, Thergon,Pimpri Chinchwad, PUNE - 411033"
+                            required
+                            readonly>Ground Floor,Office No.06,No.23/2 Barne Estate,Shri Ram Sukh Hospital Marg,Shri Vishnu Bhavan, Thergon,Pimpri Chinchwad, PUNE - 411033</textarea>
+                    </div>
+                </div>
+
+                <!-- Debit Memo / TAX INVOICE / Original Metadata row -->
+                <div class="row g-0 invoice-border-bottom" style="font-size: 0.85rem; background: #fafafa;">
+                    <div class="col-4 py-1 text-start ps-2">Debit Memo</div>
+                    <div class="col-4 py-1 text-center text-uppercase" style="letter-spacing: 1.5px;">TAX INVOICE</div>
+                    <div class="col-4 py-1 text-end pe-2">Original</div>
+                </div>
+
+                <!-- Supplier and Buyer metadata rows -->
+                <div class="row g-0 invoice-border-bottom">
+                    <!-- Left: M/s. Details (Buyer) -->
+                    <div class="col-12 col-md-6 invoice-border-right p-3">
+                        <div class="field-row">
+                            <span class="field-label" style="min-width: 50px;">M/s. :</span>
+                            <textarea class="invoice-input fw-bold flex-grow-1 text-uppercase auto-resize" rows="1"
+                                style="color: #000; font-size: 0.85rem; line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto;"
+                                required
+                                placeholder="Buyer name...">FUSION MASTER TECH INNOVATION AND DEVELOPMENT PVT LTD</textarea>
+                        </div>
+                        <div class="mb-2">
+                            <textarea class="invoice-input flex-grow-1 auto-resize" rows="2"
+                                style="line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto;"
+                                placeholder="Buyer Address..."
+                                required>Ground Floor,Office No.06,No.23/2 Barne Estate,Shri Ram Sukh Hospital Marg,Shri Vishnu Bhavan, Thergon,Pimpri Chinchwad, PUNE - 411033</textarea>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">Place of Supply :</span>
+                                    <input type="text" class="invoice-input flex-grow-1" value="27-Maharashtra"
+                                        placeholder="Supply State/Code...">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">GSTIN No. :</span>
+                                    <input type="text" class="invoice-input flex-grow-1 number-font text-uppercase"
+                                        value="27AAFCF8338N1Z0" placeholder="Buyer GSTIN...">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">Mobile / Tel :</span>
+                                    <input type="text" class="invoice-input flex-grow-1 number-font" value="7249211259"
+                                        placeholder="Mobile Number...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Invoice Info -->
+                    <div class="col-12 col-md-6 p-3">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">Invoice No. :</span>
+                                    <input type="text" id="invoiceNoInput"
+                                        class="invoice-input flex-grow-1 fw-bold number-font" value="GL/236" required
+                                        placeholder="Invoice number...">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">Date :</span>
+                                    <input type="date" class="invoice-input flex-grow-1 today-date" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">TRANSPORT :</span>
+                                    <input type="text" class="invoice-input flex-grow-1 text-uppercase"
+                                        value="TIRUPATI COURIER" placeholder="Transport/Courier name...">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">E-WAY NO. :</span>
+                                    <input type="text" class="invoice-input flex-grow-1 number-font text-uppercase"
+                                        value="" placeholder="Enter E-Way No. if any...">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">ORDER NO. :</span>
+                                    <input type="text" class="invoice-input flex-grow-1 text-uppercase" value=""
+                                        placeholder="PO / Order number...">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="field-row">
+                                    <span class="field-label" style="min-width: 110px;">Payment Terms :</span>
+                                    <input type="text" class="invoice-input flex-grow-1 text-uppercase" value="15 DAYS"
+                                        placeholder="Payment terms...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="table-responsive">
+                    <table class="invoice-table text-start" id="invoiceProductsTable">
+                        <thead>
+                            <tr style="background-color: #e9ecef; border-bottom: 2px solid #000;">
+                                <th style="width: 5%; text-align: center; font-size: 0.82rem; padding: 6px 4px;">SrNo
+                                </th>
+                                <th
+                                    style="width: 38%; text-align: center; font-size: 0.82rem; padding: 6px 4px; word-wrap: break-word;">
+                                    Product Name</th>
+                                <th style="width: 9%; text-align: center; font-size: 0.82rem; padding: 6px 4px;">HSN/SAC
+                                </th>
+                                <th style="width: 7%; text-align: center; font-size: 0.82rem; padding: 6px 4px;">Qty
+                                </th>
+                                <th style="width: 11%; text-align: center; font-size: 0.82rem; padding: 6px 4px;">Rate
+                                    (₹)</th>
+                                <th style="width: 7%; text-align: center; font-size: 0.82rem; padding: 6px 4px;">Dis %
+                                </th>
+                                <th style="width: 8%; text-align: center; font-size: 0.82rem; padding: 6px 4px;">IGST %
+                                </th>
+                                <th style="width: 13%; text-align: center; font-size: 0.82rem; padding: 6px 4px;">Amount
+                                    (₹)</th>
+                                <th class="no-print" style="width: 4%; text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoiceProductsBody">
+                            <!-- Preset Row 1 -->
+                            <tr class="product-row">
+                                <td class="text-center fw-bold number-font sr-no" style="vertical-align: middle;">1</td>
+                                <td style="vertical-align: middle;">
+                                    <div
+                                        style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+                                        <textarea class="invoice-input fw-bold text-uppercase auto-resize" rows="1"
+                                            style="line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto; text-align: left; width: 100%;"
+                                            required
+                                            placeholder="Product name...">SG806-12W COB SPOT LIGHT WHITE DIMM+TUNEABLE</textarea>
+                                        <textarea class="invoice-input text-muted text-uppercase auto-resize" rows="1"
+                                            style="font-size: 0.72rem; line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto; text-align: left; width: 100%;"
+                                            placeholder="Serial numbers/subtext...">SR NO.3110-3114</textarea>
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" class="invoice-input text-center number-font hsn-field"
+                                        value="94054090" maxlength="8" placeholder="HSN..."
+                                        style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="numeric"
+                                        class="invoice-input text-center number-font calc-trigger qty-field" value="5"
+                                        placeholder="0" required style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger rate-field"
+                                        value="1015.00" required style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger discount-field"
+                                        value="0.00" placeholder="0" style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger igst-field"
+                                        value="18.00" style="text-align: center; width: 100%;">
+                                </td>
+                                <td class="text-center number-font fw-bold amount-display"
+                                    style="vertical-align: middle; padding: 6px 4px; font-size: 0.9rem;">
+                                    5075.00
+                                </td>
+                                <td class="text-center no-print align-middle" style="vertical-align: middle;">
+                                    <button type="button" class="btn btn-xs btn-outline-danger"
+                                        style="padding: 0px 4px; font-size: 0.7rem;" onclick="removeProductRow(this)"><i
+                                            class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <!-- Preset Row 2 -->
+                            <tr class="product-row">
+                                <td class="text-center fw-bold number-font sr-no" style="vertical-align: middle;">2</td>
+                                <td style="vertical-align: middle;">
+                                    <div
+                                        style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+                                        <textarea class="invoice-input fw-bold text-uppercase auto-resize" rows="1"
+                                            style="line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto; text-align: left; width: 100%;"
+                                            required
+                                            placeholder="Product name...">SG821-3W MOVEBLE COB SPOT LIGHT WHITE NW</textarea>
+                                        <textarea class="invoice-input text-muted text-uppercase auto-resize" rows="1"
+                                            style="font-size: 0.72rem; line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto; text-align: left; width: 100%;"
+                                            placeholder="Serial numbers/subtext...">SR NO.109-118</textarea>
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" class="invoice-input text-center number-font hsn-field"
+                                        value="94054090" maxlength="8" placeholder="HSN..."
+                                        style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="numeric"
+                                        class="invoice-input text-center number-font calc-trigger qty-field" value="10"
+                                        placeholder="0" required style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger rate-field"
+                                        value="330.00" required style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger discount-field"
+                                        value="0.00" placeholder="0" style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger igst-field"
+                                        value="18.00" style="text-align: center; width: 100%;">
+                                </td>
+                                <td class="text-center number-font fw-bold amount-display"
+                                    style="vertical-align: middle; padding: 6px 4px; font-size: 0.9rem;">
+                                    3300.00
+                                </td>
+                                <td class="text-center no-print align-middle" style="vertical-align: middle;">
+                                    <button type="button" class="btn btn-xs btn-outline-danger"
+                                        style="padding: 0px 4px; font-size: 0.7rem;" onclick="removeProductRow(this)"><i
+                                            class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <!-- Preset Row 3 -->
+                            <tr class="product-row">
+                                <td class="text-center fw-bold number-font sr-no" style="vertical-align: middle;">3</td>
+                                <td style="vertical-align: middle;">
+                                    <div
+                                        style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+                                        <textarea class="invoice-input fw-bold text-uppercase auto-resize" rows="1"
+                                            style="line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto; text-align: left; width: 100%;"
+                                            required
+                                            placeholder="Product name...">SG806-12W COB SPOT LIGHT WHITE 3 IN</textarea>
+                                        <textarea class="invoice-input text-muted text-uppercase auto-resize" rows="1"
+                                            style="font-size: 0.72rem; line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto; text-align: left; width: 100%;"
+                                            placeholder="Serial numbers/subtext...">SR NO.3080-3109</textarea>
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" class="invoice-input text-center number-font hsn-field"
+                                        value="94054090" maxlength="8" placeholder="HSN..."
+                                        style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="numeric"
+                                        class="invoice-input text-center number-font calc-trigger qty-field" value="30"
+                                        placeholder="0" required style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger rate-field"
+                                        value="515.00" required style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger discount-field"
+                                        value="0.00" placeholder="0" style="text-align: center; width: 100%;">
+                                </td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <input type="text" inputmode="decimal"
+                                        class="invoice-input text-center number-font calc-trigger igst-field"
+                                        value="18.00" style="text-align: center; width: 100%;">
+                                </td>
+                                <td class="text-center number-font fw-bold amount-display"
+                                    style="vertical-align: middle; padding: 6px 4px; font-size: 0.9rem;">
+                                    15450.00
+                                </td>
+                                <td class="text-center no-print align-middle" style="vertical-align: middle;">
+                                    <button type="button" class="btn btn-xs btn-outline-danger"
+                                        style="padding: 0px 4px; font-size: 0.7rem;" onclick="removeProductRow(this)"><i
+                                            class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Product Row Button Area -->
+                <div class="p-2 invoice-border-bottom text-start no-print bg-light">
+                    <button type="button" class="btn btn-xs btn-outline-dark fw-bold" onclick="addProductRow()"><i
+                            class="fas fa-plus"></i> Add Invoice Item</button>
+                </div>
+
+                <!-- Enterprise Details & Subtotal Row - FIXED UDYAM FIELD -->
+                <div class="row g-0 align-items-center invoice-border-bottom py-2 px-3 fw-bold bg-light"
+                    style="font-size: 0.8rem;">
+                    <div class="col-12 col-md-8 d-flex flex-wrap gap-3 align-items-center">
+                        <div class="d-flex align-items-center gap-1">
+                            <span>GSTIN No.:</span>
+                            <input type="text" class="invoice-input number-font text-uppercase"
+                                style="width: 140px; font-weight: bold;" value="24AMQPR7103R1ZA" placeholder="GSTIN...">
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <span>UDYAM NO.:</span>
+                            <input type="text" class="invoice-input number-font text-uppercase udyam-input"
+                                style="font-weight: bold;" value="UDYAM-GJ-20-0016960" placeholder="UDYAM...">
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <span>TYPE OF ENTERPRISE :</span>
+                            <input type="text" class="invoice-input text-uppercase"
+                                style="width: 80px; font-weight: bold;" value="MICRO" placeholder="Type...">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 text-end d-flex justify-content-end align-items-center mt-2 mt-md-0">
+                        <span class="me-2 text-uppercase" style="letter-spacing: 0.5px;">Sub Total (₹):</span>
+                        <span id="subTotalDisplay" class="number-font fw-bold fs-6">23825.00</span>
+                    </div>
+                </div>
+
+                <!-- Financial calculation grid split -->
+                <div class="row g-0 invoice-border-bottom">
+                    <!-- Left Block: Bank & Words & Rate Summary -->
+                    <div class="col-12 col-md-7 invoice-border-right p-3 d-flex flex-column justify-content-between">
+
+                        <!-- Bank Info Details -->
+                        <div class="p-2 mb-3" style="border: 1px solid #000; font-size: 0.75rem;">
+                            <div class="row g-1">
+                                <div class="col-12 d-flex">
+                                    <span class="fw-bold" style="width: 110px;">Bank Name</span>
+                                    <span> : <input type="text" class="invoice-input fw-semibold" style="width: 200px;"
+                                            value="BANK OF MAHARASTRA" placeholder="Bank..."></span>
+                                </div>
+                                <div class="col-12 d-flex">
+                                    <span class="fw-bold" style="width: 110px;">Bank A/c. No.</span>
+                                    <span> : <input type="text" class="invoice-input number-font fw-semibold"
+                                            style="width: 200px;" value="60324068691" placeholder="A/c No..."></span>
+                                </div>
+                                <div class="col-12 d-flex">
+                                    <span class="fw-bold" style="width: 110px;">RTGS/IFSC Code</span>
+                                    <span> : <input type="text"
+                                            class="invoice-input number-font text-uppercase fw-semibold"
+                                            style="width: 200px;" value="MAHB0001542" placeholder="IFSC..."></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Amount in Words displays -->
+                        <div class="mb-3" style="font-size: 0.75rem;">
+                            <div class="mb-1">
+                                <span class="fw-bold">Total GST (in words):</span>
+                                <span id="totalGstWords" class="text-capitalize fst-italic text-secondary">Four Thousand
+                                    Four Hundred Seven And Thirty One Paise Only</span>
+                            </div>
+                            <div><span class="fw-bold bill-amount-italic">Bill Amount (in words):</span> <span
+                                    id="billAmountWords" class="text-capitalize fst-italic text-dark">Twenty Eight
+                                    Thousand Eight Hundred Ninety Two Only</span></div>
+                        </div>
+
+                        <!-- Ratewise Summary Sub-table -->
+                        <!-- Ratewise Summary Sub-table -->
+                        <div class="mt-2">
+                            <span class="fw-bold d-block mb-1 text-uppercase"
+                                style="font-size: 0.72rem; letter-spacing: 0.5px;">Ratewise Summary :</span>
+                            <table class="table table-bordered m-0 p-0 text-center"
+                                style="font-size: 0.7rem; border: 1px solid #000; background-color: #fff;">
+                                <thead>
+                                    <tr style="background: #fafafa;">
+                                        <th
+                                            style="padding: 4px 4px !important; font-size: 0.68rem; border: 1px solid #000 !important; width: 25%; text-align: center; color: #000; font-weight: 700;">
+                                            Slab</th>
+                                        <th
+                                            style="padding: 4px 4px !important; font-size: 0.68rem; border: 1px solid #000 !important; width: 25%; text-align: center; color: #000; font-weight: 700;">
+                                            Taxable Value (₹)</th>
+                                        <th
+                                            style="padding: 4px 4px !important; font-size: 0.68rem; border: 1px solid #000 !important; width: 25%; text-align: center; color: #000; font-weight: 700;">
+                                            Rate</th>
+                                        <th
+                                            style="padding: 4px 4px !important; font-size: 0.68rem; border: 1px solid #000 !important; width: 25%; text-align: center; color: #000; font-weight: 700;">
+                                            Integrated Tax (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="number-font" id="summarySlab"
+                                            style="color: #000; text-align: center;">18.00%</td>
+                                        <td class="number-font" id="summaryTaxableValue"
+                                            style="color: #000; text-align: center;">24485.00</td>
+                                        <td class="number-font" id="summaryRate"
+                                            style="color: #000; text-align: center;">18.00%</td>
+                                        <td class="number-font fw-bold" id="summaryTaxAmount"
+                                            style="color: #000; text-align: center;">4407.31</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Block: Sub-Totals & Tax Breakdown Calculations -->
+                    <div class="col-12 col-md-5 p-3 font-semibold"
+                        style="font-size: 0.8rem; background-color: #fafafa;">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
+                            <span>Freight / Courier (₹):</span>
+                            <input type="text" inputmode="decimal" id="freightInput"
+                                class="invoice-input text-end number-font calc-trigger"
+                                style="width: 100px; font-weight: bold;" value="660.00">
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
+                            <span class="fw-bold">Taxable Amount (₹):</span>
+                            <span id="taxableAmountDisplay" class="number-font fw-bold">24485.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
+                            <span>Integrated Tax / GST (₹):</span>
+                            <span id="integratedTaxDisplay" class="number-font">4407.31</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
+                            <span>Round Off (₹):</span>
+                            <input type="text" inputmode="decimal" id="roundOffInput"
+                                class="invoice-input text-end number-font calc-trigger" style="width: 100px;"
+                                value="-0.31">
+                        </div>
+                        <div
+                            class="d-flex justify-content-between align-items-center py-2 bg-dark text-white px-2 mt-3">
+                            <span class="fw-bold text-uppercase"
+                                style="font-size: 0.85rem; letter-spacing: 0.5px;">Grand Total (₹):</span>
+                            <span id="grandTotalDisplay" class="number-font fw-bold fs-5">28892.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Closing Balance & Final Metadata footer row -->
+                <div class="row g-0 fw-bold invoice-border-bottom align-items-center bg-light text-dark py-2 px-3"
+                    style="font-size: 0.85rem;">
+                    <div class="col-12 col-md-7 d-flex align-items-center gap-1">
+                        <span>CLOSING BALANCE AS ON DATE :</span>
+                        <input type="text" inputmode="decimal" id="closingBalanceInput"
+                            class="invoice-input number-font fw-bold text-dark" style="width: 150px; font-size: 0.9rem;"
+                            value="28892.00">
+                    </div>
+                    <div class="col-12 col-md-5 text-end d-flex justify-content-end align-items-center mt-1 mt-md-0">
+                        <span>Grand Total (₹):</span>
+                        <span id="footerGrandTotal" class="number-font fw-bold text-dark ms-2">28892.00</span>
+                    </div>
+                </div>
+
+                <!-- Note, Terms and Signatures Block -->
+                <div class="p-3">
+                    <div class="row g-3">
+
+                        <!-- Left bottom note & terms -->
+                        <div class="col-12 col-md-7">
+                            <div class="mb-2">
+                                <span class="fw-bold d-block mb-1">NOTE :</span>
+                                <textarea class="invoice-input" rows="2" style="resize: none;"
+                                    placeholder="Add private / public invoice note here..."></textarea>
+                            </div>
+                            <div style="font-size: 0.72rem; line-height: 1.4; color: #333;">
+                                <span class="fw-bold d-block mb-1 text-uppercase text-secondary"
+                                    style="font-size: 0.65rem; letter-spacing: 0.5px;">Terms & Conditions :</span>
+                                <ol class="ps-3 m-0">
+                                    <li>Goods once sold will not be taken back.</li>
+                                    <li>Interest @18% p.a. will be charged if payment is not made within due date.</li>
+                                    <li>Our risk and responsibility ceases as soon as the goods leave our premises.</li>
+                                    <li>"Subject to 'PUNE' Jurisdiction only. E.&.O.E"</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- Right bottom Signatures & Stamp -->
+                        <div
+                            class="col-12 col-md-5 text-center d-flex flex-column justify-content-between align-items-center">
+                            <div class="w-100 mt-2"
+                                style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                                For, FUMA
+                            </div>
+                            <!-- Stamp representation box -->
+                            <div class="stamp-box" id="stampGraphic">
+                                <div class="stamp-inner">FUSION MASTER TECH INNOVATION AND DEVELOPMENT PVT. LTD.</div>
+                                <div class="stamp-center">PROPRIETOR</div>
+                                <div class="stamp-location">* Pune *</div>
+                            </div>
+
+                            <!-- For Company Name -->
+
+
+                            <!-- Signatures Section - Without Upload buttons -->
+                            <div class="w-100 d-flex justify-content-around mt-2">
+                                <!-- Left: Receiver Signatory -->
+                                <div class="text-center">
+                                    <div
+                                        style="width: 100px; height: 35px; border-bottom: 1px solid #000; margin: 0 auto;">
+                                    </div>
+                                    <div class="pt-1 px-2" style="font-size: 0.72rem; font-weight: bold;">(Receiver
+                                        Signatory)</div>
+                                </div>
+
+                                <!-- Right: Authorised Signatory -->
+                                <div class="text-center">
+                                    <div
+                                        style="width: 100px; height: 35px; border-bottom: 1px solid #000; margin: 0 auto;">
+                                    </div>
+                                    <div class="pt-1 px-2" style="font-size: 0.72rem; font-weight: bold;">(Authorised
+                                        Signatory)</div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // High fidelity automatic calculation of totals, tax and conversion to words
+        function calculateInvoiceTotals() {
+            let subTotal = 0;
+            let currentIgstRate = 18.00;
+
+            const productRows = document.querySelectorAll('#invoiceProductsBody .product-row');
+            productRows.forEach(row => {
+                const qty = parseFloat(row.querySelector('.qty-field').value) || 0;
+                const rate = parseFloat(row.querySelector('.rate-field').value) || 0;
+                const discPercent = parseFloat(row.querySelector('.discount-field').value) || 0;
+                const igstPercent = parseFloat(row.querySelector('.igst-field').value) || 0;
+
+                // Base amount calculation
+                let lineTotal = qty * rate;
+                // Subtract discount if specified
+                if (discPercent > 0) {
+                    lineTotal -= lineTotal * (discPercent / 100);
+                }
+
+                subTotal += lineTotal;
+                if (igstPercent > 0) {
+                    currentIgstRate = igstPercent; // Track the current primary tax rate
+                }
+
+                // Update amount display in the row
+                row.querySelector('.amount-display').textContent = lineTotal.toFixed(2);
+            });
+
+            // Update subtotal display
+            document.getElementById('subTotalDisplay').textContent = subTotal.toFixed(2);
+
+            // Fetch inputs for additional expenses
+            const freight = parseFloat(document.getElementById('freightInput').value) || 0;
+            const roundOff = parseFloat(document.getElementById('roundOffInput').value) || 0;
+
+            // Taxable Amount is Subtotal + Freight
+            const taxableAmount = subTotal + freight;
+            document.getElementById('taxableAmountDisplay').textContent = taxableAmount.toFixed(2);
+
+            // Integrated Tax based on the taxable amount and primary IGST rate
+            const integratedTax = taxableAmount * (currentIgstRate / 100);
+            document.getElementById('integratedTaxDisplay').textContent = integratedTax.toFixed(2);
+
+            // Grand Total = Taxable Amount + Integrated Tax + Round Off
+            const grandTotal = taxableAmount + integratedTax + roundOff;
+            const grandTotalFixed = grandTotal.toFixed(2);
+            document.getElementById('grandTotalDisplay').textContent = grandTotalFixed;
+            document.getElementById('footerGrandTotal').textContent = grandTotalFixed;
+
+            // Sync Closing Balance
+            document.getElementById('closingBalanceInput').value = grandTotalFixed;
+
+            // Update Summary Sub-table
+            document.getElementById('summarySlab').textContent = `${currentIgstRate.toFixed(2)}%`;
+            document.getElementById('summaryTaxableValue').textContent = taxableAmount.toFixed(2);
+            document.getElementById('summaryRate').textContent = `${currentIgstRate.toFixed(2)}%`;
+            document.getElementById('summaryTaxAmount').textContent = integratedTax.toFixed(2);
+
+            // Update amount in words
+            document.getElementById('totalGstWords').textContent = numberToWords(integratedTax) + " Only";
+            document.getElementById('billAmountWords').textContent = numberToWords(grandTotal) + " Only";
+        }
+
+        // Helper function: Convert number to Indian currency/standard words representation
+        function numberToWords(num) {
+            if (num === 0) return 'Zero';
+
+            // Handle negative numbers
+            let isNegative = false;
+            if (num < 0) {
+                isNegative = true;
+                num = Math.abs(num);
+            }
+
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+                'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+            const numString = num.toFixed(2);
+            const parts = numString.split('.');
+            const wholeNum = parseInt(parts[0], 10);
+            const paisaNum = parseInt(parts[1], 10);
+
+            function convertPart(n) {
+                if (n < 20) return ones[n];
+                if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + ones[n % 10] : '');
+                if (n < 1000) return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 !== 0 ? ' ' + convertPart(n % 100) : '');
+                if (n < 100000) return convertPart(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 !== 0 ? ' ' + convertPart(n % 1000) : '');
+                if (n < 10000000) return convertPart(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 !== 0 ? ' ' + convertPart(n % 100000) : '');
+                return convertPart(Math.floor(n / 10000000)) + ' Crore' + (n % 10000000 !== 0 ? ' ' + convertPart(n % 10000000) : '');
+            }
+
+            let wordStr = isNegative ? 'Minus ' : '';
+            wordStr += convertPart(wholeNum) + ' Rupees';
+
+            if (paisaNum > 0) {
+                wordStr += ' And ' + convertPart(paisaNum) + ' Paise';
+            }
+            return wordStr;
+        }
+
+        // Product row management helpers
+        function addProductRow() {
+            const body = document.getElementById('invoiceProductsBody');
+            const rows = body.querySelectorAll('.product-row');
+            const nextIdx = rows.length + 1;
+
+            const tr = document.createElement('tr');
+            tr.className = 'product-row';
+            tr.innerHTML = `
+                    <td class="text-center fw-bold number-font sr-no">${nextIdx}</td>
+                    <td>
+                        <textarea class="invoice-input fw-bold text-uppercase mb-1 auto-resize" rows="1" style="line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto;" placeholder="Product name..." required></textarea>
+                        <textarea class="invoice-input text-muted text-uppercase auto-resize" rows="1" style="font-size: 0.72rem; line-height: 1.4; padding: 2px 4px; resize: none; overflow: hidden; height: auto;" placeholder="Serial numbers/subtext..."></textarea>
+                    </td>
+                    <td>
+                        <input type="text" class="invoice-input text-center number-font" value="94054090" placeholder="HSN...">
+                    </td>
+                    <td>
+                        <input type="text" inputmode="numeric" class="invoice-input text-center number-font calc-trigger qty-field" value="1" required>
+                    </td>
+                    <td>
+                        <input type="text" inputmode="decimal" class="invoice-input text-center number-font calc-trigger rate-field" value="0.00" required>
+                    </td>
+                    <td>
+                        <input type="text" inputmode="decimal" class="invoice-input text-center number-font calc-trigger discount-field" value="0.00" placeholder="0">
+                    </td>
+                    <td>
+                        <input type="text" inputmode="decimal" class="invoice-input text-center number-font calc-trigger igst-field" value="18.00">
+                    </td>
+                    <td class="text-center number-font fw-bold amount-display" style="padding: 6px 4px;">
+                        0.00
+                    </td>
+                    <td class="text-center no-print align-middle">
+                        <button type="button" class="btn btn-xs btn-outline-danger" onclick="removeProductRow(this)"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+
+            body.appendChild(tr);
+            attachRowTriggers(tr);
+
+            // Setup auto-resize textareas for the new row
+            tr.querySelectorAll('textarea.auto-resize').forEach(textarea => {
+                textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+                autoResizeTextarea(textarea);
+            });
+
+            calculateInvoiceTotals();
+        }
+
+        function removeProductRow(btn) {
+            const row = btn.closest('.product-row');
+            const body = row.parentNode;
+            if (body.querySelectorAll('.product-row').length > 1) {
+                row.remove();
+                // Update sr numbers
+                body.querySelectorAll('.product-row').forEach((row, index) => {
+                    row.querySelector('.sr-no').textContent = index + 1;
+                });
+                calculateInvoiceTotals();
+            } else {
+                alert('At least one item row must remain in the invoice.');
+            }
+        }
+
+        // Attach event triggers to inputs inside a specific product row
+        function attachRowTriggers(row) {
+            row.querySelectorAll('.calc-trigger').forEach(input => {
+                input.addEventListener('input', calculateInvoiceTotals);
+            });
+        }
+
+        // Auto resize function for textareas
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            // Add an 8px safety buffer to completely eliminate vertical clipping in html2canvas
+            textarea.style.height = (textarea.scrollHeight + 8) + 'px';
+        }
+
+        // Setup general hooks
+        document.addEventListener('DOMContentLoaded', () => {
+            // Attach calculation triggers to all pre-existing triggers
+            document.querySelectorAll('.calc-trigger').forEach(input => {
+                input.addEventListener('input', calculateInvoiceTotals);
+            });
+
+            // Initialize auto-resize textareas
+            document.querySelectorAll('textarea.auto-resize').forEach(textarea => {
+                textarea.addEventListener('input', () => autoResizeTextarea(textarea));
+                // Run initially to fit the content
+                autoResizeTextarea(textarea);
+            });
+
+            // Initialize default date
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('.today-date').forEach(input => {
+                if (!input.value) input.value = today;
+            });
+
+            // Set up local file inputs for custom signature, stamp and logo
+            setupSigFile('receiverSig', 'receiverSigDisplay');
+            setupSigFile('stampSig', 'stampSigDisplay');
+            setupLogoFile('logoImageFile', 'customLogoImage');
+
+            // Run initial calculation
+            calculateInvoiceTotals();
+        });
+
+        // Logo Image handler
+        function setupLogoFile(inputId, imgId) {
+            const input = document.getElementById(inputId);
+            const img = document.getElementById(imgId);
+            const defaultGraphic = document.getElementById('defaultLogoGraphic');
+            const customWrapper = document.getElementById('customLogoWrapper');
+            const clearBtn = document.getElementById('clearLogoBtn');
+            if (!input || !img) return;
+
+            input.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        img.src = event.target.result;
+                        defaultGraphic.classList.add('d-none');
+                        customWrapper.classList.remove('d-none');
+                        clearBtn.classList.remove('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function clearCustomLogo() {
+            document.getElementById('logoImageFile').value = '';
+            document.getElementById('customLogoImage').src = '';
+            document.getElementById('defaultLogoGraphic').classList.remove('d-none');
+            document.getElementById('customLogoWrapper').classList.add('d-none');
+            document.getElementById('clearLogoBtn').classList.add('d-none');
+        }
+
+        // File reader handler
+        function setupSigFile(inputId, displayId) {
+            const input = document.getElementById(inputId);
+            const display = document.getElementById(displayId);
+            if (!input || !display) return;
+
+            input.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        display.innerHTML = `<img src="${event.target.result}" style="max-height: 35px; max-width: 120px; object-fit: contain;">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // PDF Download functionality
+        document.getElementById('downloadPdfBtn').addEventListener('click', function () {
+            const invoice = document.querySelector('.invoice-box');
+
+            html2canvas(invoice, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                logging: false
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                const imgX = (pdfWidth - imgWidth * ratio) / 2;
+                const imgY = 0;
+
+                pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                pdf.save('tax-invoice.pdf');
+            }).catch(error => {
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please try again.');
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+
+
